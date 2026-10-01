@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5f0">
+  <title>Ufuoma's Daily Task. - DMH To-Do-List</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="task-store.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="wordmark" href="#tasks" aria-label="DMH To-Do-List home"><span class="wordmark-mark">d.</span><span>DMH To-Do-List</span></a>
+      <div class="nav-label">Workspace</div>
+      <nav class="primary-nav">
+        <button class="nav-item is-active" type="button" data-view="tasks"><span class="nav-icon" aria-hidden="true">▤</span>Ufuoma's Daily Task.<span class="nav-count" id="nav-task-count">0</span></button>
+        <button class="nav-item" type="button" data-view="notes"><span class="nav-icon" aria-hidden="true">▧</span>Notes</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-rule"></div>
+        <div class="sync-indicator"><span></span>Saved on this device</div>
+        <p>Your plans stay yours.<br>Nothing leaves this browser.</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <section id="tasks-view" class="view-section" aria-labelledby="page-title">
+        <header class="page-header">
+          <div>
+            <div class="eyebrow" id="today-label">YOUR DAY</div>
+            <h1 id="page-title">Ufuoma's Daily Task.</h1>
+            <p class="page-subtitle">A little clarity goes a long way.</p>
+          </div>
+          <button class="button button-primary" type="button" id="new-task-button"><span aria-hidden="true">+</span> New task</button>
+        </header>
+
+        <section class="summary-strip" aria-label="Task summary">
+          <div class="summary-item"><span class="summary-number" id="active-count">0</span><span>to do</span></div>
+          <div class="summary-divider"></div>
+          <div class="summary-item"><span class="summary-number" id="completed-count">0</span><span>completed</span></div>
+          <div class="summary-divider"></div>
+          <div class="summary-item summary-focus"><span class="focus-dot"></span><span id="focus-copy">A fresh start. Pick one thing.</span></div>
+        </section>
+
+        <div class="list-heading">
+          <div><h2>All tasks</h2><span class="list-total" id="visible-count">0</span></div>
+          <button class="text-button" id="clear-filters" type="button" hidden>Clear filters</button>
+        </div>
+        <div class="filter-bar" role="search">
+          <label class="search-field"><span aria-hidden="true">⌕</span><input id="task-search" type="search" placeholder="Find a task..." aria-label="Search tasks"></label>
+          <label class="select-wrap"><span class="sr-only">Filter by priority</span><select id="priority-filter"><option value="">Any priority</option><option value="high">High priority</option><option value="medium">Medium priority</option><option value="low">Low priority</option></select></label>
+          <label class="select-wrap"><span class="sr-only">Filter by category</span><select id="category-filter"><option value="">Any category</option></select></label>
+          <label class="select-wrap"><span class="sr-only">Filter by status</span><select id="status-filter"><option value="all">All tasks</option><option value="active">To do</option><option value="completed">Completed</option></select></label>
+        </div>
+        <div class="task-list" id="task-list" aria-live="polite"></div>
+      </section>
+
+      <section id="notes-view" class="view-section" aria-labelledby="notes-page-title" hidden>
+        <header class="page-header">
+          <div>
+            <div class="eyebrow">THOUGHTS & DETAILS</div>
+            <h1 id="notes-page-title">Notes</h1>
+            <p class="page-subtitle">Keep the context close to the work.</p>
+          </div>
+          <button class="button button-primary" type="button" id="new-note-button"><span aria-hidden="true">+</span> New note</button>
+        </header>
+        <div class="notes-toolbar"><span id="notes-count">0 notes</span><span>Notes can stand alone or belong to a task.</span></div>
+        <div class="notes-grid" id="notes-list" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="editor-dialog" id="task-dialog" aria-labelledby="task-dialog-title">
+    <form id="task-form" class="editor-form">
+      <div class="dialog-topline"><span class="eyebrow">MAKE IT HAPPEN</span><button class="icon-button" type="button" data-close="task-dialog" aria-label="Close dialog">×</button></div>
+      <h2 id="task-dialog-title">New task</h2>
+      <input type="hidden" id="task-id">
+      <label class="field-label" for="task-title">Task name</label>
+      <input class="text-input" id="task-title" name="title" maxlength="120" placeholder="What needs doing?" required>
+      <label class="field-label" for="task-description">Details <span>optional</span></label>
+      <textarea class="text-input textarea" id="task-description" name="description" rows="3" maxlength="500" placeholder="Add a little context..."></textarea>
+      <div class="field-row">
+        <div><label class="field-label" for="task-category">Category</label><input class="text-input" id="task-category" name="category" maxlength="32" value="Personal" required></div>
+        <div><label class="field-label" for="task-priority">Priority</label><select class="text-input" id="task-priority" name="priority"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></div>
+      </div>
+      <label class="field-label" for="task-due-date">Due date <span>optional</span></label>
+      <input class="text-input date-input" id="task-due-date" name="dueDate" type="date">
+      <div class="dialog-actions"><button class="button button-quiet" type="button" data-close="task-dialog">Cancel</button><button class="button button-primary" type="submit" id="save-task-button">Add task</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="editor-dialog" id="note-dialog" aria-labelledby="note-dialog-title">
+    <form id="note-form" class="editor-form">
+      <div class="dialog-topline"><span class="eyebrow">KEEP A THOUGHT</span><button class="icon-button" type="button" data-close="note-dialog" aria-label="Close dialog">×</button></div>
+      <h2 id="note-dialog-title">New note</h2>
+      <input type="hidden" id="note-id">
+      <label class="field-label" for="note-title">Title</label>
+      <input class="text-input" id="note-title" name="title" maxlength="100" placeholder="Give this note a name" required>
+      <label class="field-label" for="note-content">Note</label>
+      <textarea class="text-input textarea note-content-input" id="note-content" name="content" rows="7" maxlength="3000" placeholder="Capture the details while they're fresh..." required></textarea>
+      <label class="field-label" for="note-task">Related task <span>optional</span></label>
+      <select class="text-input" id="note-task"><option value="">Standalone note</option></select>
+      <div class="dialog-actions"><button class="button button-quiet" type="button" data-close="note-dialog">Cancel</button><button class="button button-primary" type="submit" id="save-note-button">Save note</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
