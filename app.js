@@ -15,10 +15,12 @@
 
   function loadState() {
     try {
-      const saved = JSON.parse(localStorage.getItem(storageKey));
-      return saved && Array.isArray(saved.tasks) && Array.isArray(saved.notes) ? saved : store.createState();
+      const storedState = localStorage.getItem(storageKey);
+      if (storedState === null) return store.createEmptyState();
+      const saved = JSON.parse(storedState);
+      return saved && Array.isArray(saved.tasks) && Array.isArray(saved.notes) ? saved : store.createEmptyState();
     } catch (error) {
-      return store.createState();
+      return store.createEmptyState();
     }
   }
 

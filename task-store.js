@@ -10,8 +10,12 @@
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
   }
 
-  function createState() {
+  function createEmptyState() {
     return { tasks: [], notes: [] };
+  }
+
+  function createState() {
+    return createEmptyState();
   }
 
   function requireState(state) {
@@ -161,6 +165,7 @@
 
   root.TaskStore = Object.freeze({
     createId,
+    createEmptyState,
     createState,
     createTask,
     updateTask,
